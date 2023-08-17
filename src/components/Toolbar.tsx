@@ -15,6 +15,9 @@ const Toolbar = () => {
           <span className="hover-underline-animation">What We Do</span>
         </div>
         <div className="flex font-varelaround text-base font-normal text-lightgrey self-center">
+          <span className="hover-underline-animation">Announcements</span>
+        </div>
+        <div className="flex font-varelaround text-base font-normal text-lightgrey self-center">
           <span className="hover-underline-animation">Donate</span>
         </div>
         <div className="flex h-full items-center">
