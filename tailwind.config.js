@@ -4,10 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'mwhite': '#FFFFFF',
-        'darkblue': '#181E4B',
-        'skyblue': '#4475F2',
-        'regular': '#5E6282'
+        'lightgrey': '#888888',
+        'pink': '#E10982'
       },
       fontFamily: {
         opensans: ["OpenSans"],
