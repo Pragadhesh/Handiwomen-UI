@@ -11,3 +11,13 @@
   font-family: 'VarelaRound';
   src: url(./assets/fonts/Varela_Round/VarelaRound-Regular.ttf);
 }
+
+@font-face {
+  font-family: 'Hind';
+  src: url(./assets/fonts/Hind/Hind-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url(./assets/fonts/Montserrat/static/Montserrat-Medium.ttf);
+}

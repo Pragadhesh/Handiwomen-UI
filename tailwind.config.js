@@ -9,7 +9,9 @@ module.exports = {
       },
       fontFamily: {
         opensans: ["OpenSans"],
-        varelaround: ["VarelaRound"]
+        varelaround: ["VarelaRound"],
+        hind: ["Hind"],
+        montserrat: ["Montserrat"]
     }
     },
   },
