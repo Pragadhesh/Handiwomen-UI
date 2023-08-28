@@ -7,23 +7,28 @@ import {
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import Toolbar from "./Toolbar";
+import { BACKEND_URL } from "../constants/backendurl";
+import axios from "axios";
+import { Employeedetails } from "../interface/Employeedetails";
 
 const Employee = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [name, setName] = useState("");
+  const [name, setName] = useState<number>();
   const [type, setType] = useState("");
   const [quantity, setQuantity] = useState(10);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleNameChange = (event: SelectChangeEvent) => {
-    setName(event.target.value as string);
+  const [employees, setEmployees] = useState<Employeedetails[]>([]);
+
+  const handleNameChange = (event: SelectChangeEvent<number>) => {
+    setName(event.target.value as number);
   };
 
   const handleTypeChange = (event: SelectChangeEvent) => {
@@ -34,19 +39,49 @@ const Employee = () => {
     setSelectedDate(date);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedDate || !name || !type || !quantity) {
       setError(true);
     } else {
-      setError(false);
       setIsLoading(true);
-      console.log(dayjs(selectedDate).format("DD-MM-YYYY"));
-      console.log(name);
-      console.log(type);
-      console.log(quantity);
-      setSuccess(true);
+      setError(false);
+      try {
+        const response = await axios.post(`${BACKEND_URL}sign`, {
+          id: name,
+          type: type,
+          count: quantity,
+          date: dayjs(selectedDate).format("DD-MM-YYYY"),
+        });
+        if (response.status === 200) {
+          setSuccess(true);
+          setIsLoading(false);
+        }
+      } catch (error: any) {
+        console.log(error);
+        setIsLoading(false);
+      }
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}employee`);
+
+        const employeeData = response.data;
+
+        setEmployees(employeeData);
+
+        console.log(employees);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -78,9 +113,11 @@ const Employee = () => {
                     onChange={handleNameChange}
                     className="flex w-72"
                   >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    {employees.map((employee) => (
+                      <MenuItem key={employee.id} value={employee.id}>
+                        {employee.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </div>
               </div>

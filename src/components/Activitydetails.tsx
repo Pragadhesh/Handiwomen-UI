@@ -15,6 +15,7 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import Person4Icon from "@mui/icons-material/Person4";
+import { Link } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -68,12 +69,14 @@ const Activitydetails = () => {
       {!isLoading && (
         <div className="flex flex-col w-full h-full">
           <div className="grid grid-cols-3 w-full pl-5 pt-5">
-            <button
-              color="secondary"
-              className="w-32 h-10 bg-pink text-white font-varelaround font-bold text-sm rounded justify-start"
-            >
-              Back
-            </button>
+            <Link to="/manager/empinfo">
+              <button
+                color="secondary"
+                className="w-32 h-10 bg-pink text-white font-varelaround font-bold text-sm rounded justify-start"
+              >
+                Back
+              </button>
+            </Link>
           </div>
           <div className="grid grid-cols-4 w-full h-full">
             <div className="flex col-span-1 w-full h-full justify-center items-center">
