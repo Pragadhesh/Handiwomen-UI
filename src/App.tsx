@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Manager from "./components/Manager";
 import Employeeinformation from "./components/Employeeinformation";
 import Activitydetails from "./components/Activitydetails";
+import Announcement from "./components/Announcement";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/manager" element={<Manager />} />
         <Route path="/manager/empinfo" element={<Employeeinformation />} />
         <Route path="/manager/empinfo/:id" element={<Activitydetails />} />
+        <Route path="/announcement" element={<Announcement />} />
       </Routes>
     </div>
   );

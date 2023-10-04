@@ -68,12 +68,8 @@ const Employee = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(`${BACKEND_URL}employee`);
-
         const employeeData = response.data;
-
         setEmployees(employeeData);
-
-        console.log(employees);
         setIsLoading(false);
       } catch (err) {
         console.log(err);

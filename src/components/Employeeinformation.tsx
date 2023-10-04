@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Toolbar from "./Toolbar";
 import {
   Box,
@@ -11,6 +11,10 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import * as EmailValidator from "email-validator";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import { Employeedetails } from "../interface/Employeedetails";
+import axios from "axios";
+import { BACKEND_URL } from "../constants/backendurl";
+import { Link } from "react-router-dom";
 
 const addemployeemodalstyle = {
   position: "absolute" as "absolute",
@@ -30,6 +34,10 @@ const Employeeinformation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchString, setSearchString] = useState("");
   const [addEmployeeModal, setAddEmployeeModal] = useState(false);
+
+  const [employees, setEmployees] = useState<Employeedetails[]>([]);
+
+  const [empid, setEmpid] = useState<number>();
 
   const [name, setName] = useState("");
   const [age, setAge] = useState<Number>();
@@ -68,15 +76,44 @@ const Employeeinformation = () => {
     setAddEmployeeModal(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || error || !age) {
       setFormError(true);
     } else {
       setFormError(false);
-      setIsAddEmpLoading(false);
-      setSuccess(true);
+      setIsAddEmpLoading(true);
+      try {
+        const response = await axios.post(`${BACKEND_URL}addemployee`, {
+          name: name,
+          age: age,
+          email: email,
+        });
+        if (response.status === 200) {
+          setSuccess(true);
+          setIsAddEmpLoading(false);
+        }
+      } catch (error: any) {
+        console.log(error);
+        setIsAddEmpLoading(false);
+      }
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}employee`);
+        const employeeData = response.data;
+        setEmployees(employeeData);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -201,32 +238,29 @@ const Employeeinformation = () => {
             </div>
           </div>
           <div className="grid grid-flow-row justify-center gap-5 p-10">
-            <Card className="grid grid-cols-8 w-full h-20">
-              <div className="flex justify-start items-center text-xl font-bold col-span-3 text-pink font-varelaround pl-5">
-                Sita
-              </div>
-              <div className="flex justify-start items-center text-base font-bold col-span-3 text-lightgrey font-varelaround">
-                Sita@gmail.com
-              </div>
-              <div className="flex items-center justify-start col-span-2 pr-2">
-                <button className="flex w-28 h-10 bg-pink text-white items-center justify-center font-varelaround text-sm font-normal rounded border-pink">
-                  View Details
-                </button>
-              </div>
-            </Card>
-            <Card className="grid grid-cols-8 w-full h-20">
-              <div className="flex justify-start items-center text-xl font-bold col-span-3 text-pink font-varelaround pl-5">
-                Sita
-              </div>
-              <div className="flex justify-start items-center text-base font-bold col-span-3 text-lightgrey font-varelaround">
-                Sita@gmail.com
-              </div>
-              <div className="flex items-center justify-start col-span-2">
-                <button className="flex w-28 h-10 bg-pink text-white items-center justify-center font-varelaround text-sm font-normal rounded border-pink">
-                  View Details
-                </button>
-              </div>
-            </Card>
+            {employees
+              .filter((employee) =>
+                employee.name
+                  .toLocaleLowerCase()
+                  .includes(searchString.toLowerCase())
+              )
+              .map((employee) => (
+                <Card className="grid grid-cols-8 gap-5 w-full h-20">
+                  <div className="flex justify-start items-center text-xl font-bold col-span-3 text-pink font-varelaround pl-5">
+                    {employee.name}
+                  </div>
+                  <div className="flex justify-start items-center text-base font-bold col-span-3 text-lightgrey font-varelaround">
+                    {employee.email}
+                  </div>
+                  <div className="flex items-center justify-start col-span-2 pr-2">
+                    <Link to={`/manager/empinfo/${employee.id}`}>
+                      <button className="flex w-28 h-10 bg-pink text-white items-center justify-center font-varelaround text-sm font-normal rounded border-pink">
+                        View Details
+                      </button>
+                    </Link>
+                  </div>
+                </Card>
+              ))}
           </div>
         </div>
       )}

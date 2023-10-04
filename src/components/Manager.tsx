@@ -51,7 +51,7 @@ const Manager = () => {
             </div>
 
             <div className="flex items-center row-span-2">
-              <Link to="/employee">
+              <Link to="/announcement">
                 <button className="flex w-32 h-10 bg-pink text-white items-center justify-center font-varelaround text-base font-normal rounded-full border-pink">
                   View details
                 </button>

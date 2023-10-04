@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Toolbar from "./Toolbar";
 import {
   CircularProgress,
@@ -9,13 +9,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  createStyles,
-  makeStyles,
   styled,
   tableCellClasses,
 } from "@mui/material";
 import Person4Icon from "@mui/icons-material/Person4";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { Activity } from "../interface/Activity";
+import axios from "axios";
+import { BACKEND_URL } from "../constants/backendurl";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,6 +43,27 @@ const Activitydetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(true);
 
+  const location = useLocation();
+  const id = location.pathname.split("/").pop();
+
+  const [employee, setEmployee] = useState<Activity>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}employee/${id}`);
+        const employeeData = response.data;
+        setEmployee(employeeData);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
+
   function createData(
     date: string,
     type: string,
@@ -58,6 +80,7 @@ const Activitydetails = () => {
     createData("Cupcake", "handloom", 3.7, "Approved"),
     createData("Gingerbread", "handicraft", 16.0, "Pending"),
   ];
+
   return (
     <div className="flex w-full h-full flex-col">
       <Toolbar></Toolbar>
@@ -93,7 +116,7 @@ const Activitydetails = () => {
                     Name:
                   </div>
                   <div className="flex w-full text-pink font-montserrat font-bold text-sm">
-                    Sita
+                    {employee?.name}
                   </div>
                 </div>
                 <div className="grid grid-cols-2">
@@ -101,7 +124,7 @@ const Activitydetails = () => {
                     Email:
                   </div>
                   <div className="flex w-full text-pink font-montserrat font-bold text-sm">
-                    Sita14@gmail.com
+                    {employee?.email}
                   </div>
                 </div>
                 <div className="grid grid-cols-2">
@@ -109,18 +132,18 @@ const Activitydetails = () => {
                     Age:
                   </div>
                   <div className="flex w-full text-pink font-montserrat font-bold text-sm">
-                    27
+                    {employee?.age}
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex col-span-3 w-full h-full justify-center items-center">
-              {!result && (
+              {employee?.dailyTasks.length === 0 && (
                 <div className="flex font-varelaround text-xl text-pink">
                   No data found
                 </div>
               )}
-              {result && (
+              {employee?.dailyTasks.length !== 0 && (
                 <div className="flex w-4/5 justify-center h-full p-5">
                   <TableContainer component={Paper} className="flex w-60">
                     <Table>
@@ -137,7 +160,7 @@ const Activitydetails = () => {
                         </StyledTableRow>
                       </TableHead>
                       <TableBody>
-                        {rows.map((row) => (
+                        {employee?.dailyTasks.map((row) => (
                           <StyledTableRow
                             key={row.date}
                             sx={{
@@ -148,10 +171,10 @@ const Activitydetails = () => {
                               {row.date}
                             </TableCell>
                             <TableCell align="right">{row.type}</TableCell>
+                            <TableCell align="right">{row.count}</TableCell>
                             <TableCell align="right">
-                              {row.itemscreated}
+                              {row.isApproved ? "Approved" : "Pending"}
                             </TableCell>
-                            <TableCell align="right">{row.status}</TableCell>
                           </StyledTableRow>
                         ))}
                       </TableBody>
